@@ -14,7 +14,7 @@ gcc -c ps3_connect.c -o ps3_connect.o
 
 gcc -c setup_midi_port.c -o setup_midi_port.o
 
-gcc -o connect_ps3_maintest main.c ps3_connect.o setup_midi_port.o -levdev -lasound
+gcc -o ps3_alsa_midi main.c ps3_connect.o setup_midi_port.o -levdev -lasound
 
 */
 
