@@ -7,7 +7,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-int ps3_connect(int* fd_ptr, int* rc_ptr);
+struct libevdev* ps3_connect(int* fd_ptr, int* rc_ptr);
 
 #endif // PS3_CONNECT_H
-

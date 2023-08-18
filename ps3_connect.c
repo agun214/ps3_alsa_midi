@@ -1,6 +1,6 @@
 #include "ps3_connect.h"
 
-int ps3_connect(int* fd_ptr, int* rc_ptr) {
+struct libevdev* ps3_connect(int* fd_ptr, int* rc_ptr) {
     
     int vendor_id = 0x045e;
     int product_id = 0x028e;
@@ -29,5 +29,5 @@ int ps3_connect(int* fd_ptr, int* rc_ptr) {
     *fd_ptr = fd;
     *rc_ptr = rc;
 
+    return dev; // Return the dev variable to main
 }
-

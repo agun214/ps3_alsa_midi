@@ -3,7 +3,6 @@
 //#include <unistd.h>
 //#include "ps3_connect.h"
 
-
 // create_alsamidi_port
 int setup_midi_port(snd_seq_t** midi_ptr, int* port_ptr) {
 
@@ -21,6 +20,4 @@ int setup_midi_port(snd_seq_t** midi_ptr, int* port_ptr) {
 	*port_ptr = port;
 
     printf("port: open\n");
-
-
 }
