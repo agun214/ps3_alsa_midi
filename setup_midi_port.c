@@ -1,5 +1,5 @@
-//#include "setup_midi_port.h"
-#include <alsa/asoundlib.h>
+#include "setup_midi_port.h"
+//#include <alsa/asoundlib.h>
 //#include <unistd.h>
 //#include "ps3_connect.h"
 

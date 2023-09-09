@@ -7,6 +7,7 @@
 #include <alsa/asoundlib.h>
 #include "ps3_connect.h" // Include your custom header (?)
 #include "setup_midi_port.h"  // Include the MIDI setup header
+#include "ps3_midi_map.h"
 
 /*
 gcc -c ps3_connect.c -o ps3_connect.o
@@ -23,9 +24,15 @@ int main(int argc, char** argv) {
 	dev = ps3_connect(&fd, &rc);
 	setup_midi_port(&midi, &port);
 
-	//ps3_midi_map(dev, midi_port, &midi);
+	ps3_midi_map(dev, port, midi);
+
+    libevdev_free(dev);
+    close(fd);
+	snd_seq_close(midi);
+    return 0;
+}
 	// Create MIDI number note array
-	const int NOTE_MAP[] = {60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76};
+/*	const int NOTE_MAP[] = {60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76};
 	int channel = 0;
 	int invert_axis = 1;
 
@@ -187,9 +194,9 @@ int main(int argc, char** argv) {
             break; // Exit the loop after 10 seconds
         }
     }
-*/
+
     libevdev_free(dev);
     close(fd);
 	snd_seq_close(midi);
     return 0;
-}
+}*/
