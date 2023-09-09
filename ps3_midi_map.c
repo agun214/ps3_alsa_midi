@@ -55,22 +55,45 @@ void ps3_midi_map(struct libevdev *dev, int port, snd_seq_t *midi) {
 					midi_event.data.control.value = MIDI_CC_VALUE;  // use joystick position as controller value
 					break;
 				case ABS_RX: 
-					invert_axis = 1;
-					pitchbend_val = (int)(((float)(ev.value - joystick_mid) / (float)(joystick_max - joystick_min)) * 16383.5f);
-					midi_event.type = SND_SEQ_EVENT_PITCHBEND;
-					midi_event.data.control.channel = MIDI_CHANNEL;
-					midi_event.data.control.value = pitchbend_val;					
-					break;
+					if (ev.value == -32768) {
+						NOTE_OCTAVE = 60;
+						break;
+					} else if (ev.value == 32767) {
+						NOTE_OCTAVE = 36;
+						break;
+					} else {
+						break;
+					}
+
+
+
+
 				case ABS_RY: 
-					invert_axis = -1;
-					joystick_mid = joystick_mid / 2;
-					MIDI_CC_VALUE = (int)(((float)(ev.value - joystick_mid) / (float)(joystick_max - joystick_min)) * 255.5f * invert_axis);
-					MIDI_CC_VALUE = abs(MIDI_CC_VALUE);
-					midi_event.type = SND_SEQ_EVENT_CONTROLLER;
-					midi_event.data.control.channel = MIDI_CHANNEL;  // set MIDI channel to 1
-					midi_event.data.control.param = MIDI_CC;  // set controller to modulation wheel
-					midi_event.data.control.value = MIDI_CC_VALUE;  // use joystick position as controller value
-					break;
+					if (ev.value == -32768) {
+						NOTE_OCTAVE = 72;
+						break;
+					} else if (ev.value == 32767) {
+						NOTE_OCTAVE = 24;
+						break;
+					} else {
+						break;
+					}
+
+				case 317: // L3
+					if (ev.value == 1) {
+						NOTE_OCTAVE = 84;
+						break;
+					} else {
+						break;
+					}
+				case 318: // R3
+					if (ev.value == 1) {
+						NOTE_OCTAVE = 48;
+						break;
+					} else {
+						break;
+					}
+
 				case ABS_HAT0X:
 					if (ev.value == 1) {
 						note_index = 12;
@@ -89,7 +112,7 @@ void ps3_midi_map(struct libevdev *dev, int port, snd_seq_t *midi) {
 						break;
 					}
 
-				case 304: case 305: case 307 ... 318:
+				case 304: case 305: case 307 ... 316:
 					note_index = ev.code - 304;
 					break;
 				case 2:
