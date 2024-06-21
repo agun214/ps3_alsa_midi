@@ -5,10 +5,7 @@
 #include <libevdev-1.0/libevdev/libevdev.h>
 #include <alsa/asoundlib.h>
 
-/*
-gcc -o gamepad5-midi gamepad5-midi.c -I/usr/include/libevdev-1.0 -levdev -lasound
-
-*/
+/* gcc -o gamepad5-midi gamepad5-midi.c -I/usr/include/libevdev-1.0 -levdev -lasound */
   
 #define NUM_CONTROLS 19
 
@@ -30,10 +27,8 @@ int main(int argc, char **argv) {
     int fd, rc, port;
 	snd_seq_t* midi;
 	struct libevdev* dev = ps3_connect(&fd, &rc);
-
 	setup_midi_port(&midi, &port);
 	dev_midi_event_loop(dev, midi, port);
-
 
     // Clean up resources
 	libevdev_free(dev);
@@ -90,7 +85,7 @@ int setup_midi_port(snd_seq_t** midi_ptr, int* port_ptr) {
     printf("port: open\n");
 }
 
-//   MIDI_note(&midi, controlStates[controlIndex].MIDIevcode, ev.value, channel, port, noteoffset);
+//   MIDI_note(midi, controlStates[controlIndex].MIDIevcode, ev.value, channel, port, noteoffset);
 void MIDI_note(snd_seq_t *midi, int note, int velocity, int channel, int port, int noteoffset) {
 	snd_seq_event_t midi_event;
 	snd_seq_ev_clear(&midi_event);
@@ -119,40 +114,39 @@ void MIDI_controller(struct libevdev *dev, struct input_event ev, snd_seq_t *mid
 	snd_seq_ev_set_source(&midi_event, port);
 	snd_seq_ev_set_subs(&midi_event);
 	snd_seq_ev_set_direct(&midi_event);
-
+	
 	// Calculate the pitch bend value based on the joystick position
 	int joystick_min = libevdev_get_abs_minimum(dev, ev.code);
 	int joystick_max = libevdev_get_abs_maximum(dev, ev.code);
 	int joystick_mid = (joystick_max + joystick_min) / 2;
-//    int modwheel_val = (int)((float)((ev.value - joy_mid) / joy_range) * 255.5f * invert_axis);
 	int modwheel_val = (int)(((float)(ev.value - joystick_mid) / (float)(joystick_max - joystick_min)) * 255.0f);
 
 	switch(invert_axis){
 		case 1:	modwheel_val = modwheel_val - invert_axis; break;
 		case -1: modwheel_val = modwheel_val * invert_axis; break;
 	}
-
   	modwheel_val = abs(modwheel_val);
-
+	
 	// Set the MIDI event to a pitchbend event
 	midi_event.type = SND_SEQ_EVENT_CONTROLLER;
 	midi_event.data.control.channel = channel;  // set MIDI channel to 1
 	midi_event.data.control.param = 1;  // set controller to modulation wheel
 	midi_event.data.control.value = modwheel_val;  // use joystick position as controller value	
-
+	
+    // Send the MIDI event
     snd_seq_event_output(midi, &midi_event);
     snd_seq_drain_output(midi);
 }
 
 // Function to handle pitch bend events
-//   MIDI_pitchbend(&dev, ev, &midi, port, channel, 1);
+//   MIDI_pitchbend(dev, ev, &midi, port, channel, 1);
 void MIDI_pitchbend(struct libevdev *dev, struct input_event ev, snd_seq_t *midi, int port, int channel, int invert_axis) {
     snd_seq_event_t midi_event;
     snd_seq_ev_clear(&midi_event);
     snd_seq_ev_set_source(&midi_event, port);
     snd_seq_ev_set_subs(&midi_event);
     snd_seq_ev_set_direct(&midi_event);
-
+	
 	// Calculate the pitch bend value based on the joystick position
 	int joystick_min = libevdev_get_abs_minimum(dev, ev.code);
 	int joystick_max = libevdev_get_abs_maximum(dev, ev.code);
@@ -167,7 +161,7 @@ void MIDI_pitchbend(struct libevdev *dev, struct input_event ev, snd_seq_t *midi
     midi_event.type = SND_SEQ_EVENT_PITCHBEND;
     midi_event.data.control.channel = channel;
     midi_event.data.control.value = pitchbend_val;
-
+	
     // Send the MIDI event
     snd_seq_event_output(midi, &midi_event);
     snd_seq_drain_output(midi);
@@ -259,3 +253,20 @@ void dev_midi_event_loop(struct libevdev *dev, snd_seq_t *midi, int port) {
 		}
 	}
 }
+
+
+/*
+snd_seq_event_t MIDI_event(struct libevdev *dev, struct input_event ev, snd_seq_t *midi, int port, int channel, int invert_axis) {
+    snd_seq_event_t midi_event;
+    snd_seq_ev_clear(&midi_event);
+    snd_seq_ev_set_source(&midi_event, port);
+    snd_seq_ev_set_subs(&midi_event);
+    snd_seq_ev_set_direct(&midi_event);
+
+
+
+    // Send the MIDI event
+    snd_seq_event_output(midi, &midi_event);
+    snd_seq_drain_output(midi);
+}
+*/
