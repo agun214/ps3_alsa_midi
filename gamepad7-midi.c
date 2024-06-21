@@ -24,13 +24,13 @@ void MIDI_pitchbend(struct libevdev *dev, struct input_event ev, snd_seq_t *midi
 void dev_midi_event_loop(struct libevdev *dev, snd_seq_t *midi, int port);
 
 int main(int argc, char **argv) {
-    int fd, rc, port;
+	int fd, rc, port;
 	snd_seq_t* midi;
 	struct libevdev* dev = ps3_connect(&fd, &rc);
 	setup_midi_port(&midi, &port);
 	dev_midi_event_loop(dev, midi, port);
 
-    // Clean up resources
+	// Clean up resources
 	libevdev_free(dev);
 	close(fd);
 	return 0;
@@ -38,34 +38,34 @@ int main(int argc, char **argv) {
 
 struct libevdev* ps3_connect(int* fd_ptr, int* rc_ptr) {
     
-    int vendor_id = 0x045e;
-    int product_id = 0x028e;
+	int vendor_id = 0x045e;
+	int product_id = 0x028e;
 
-    struct libevdev* dev = NULL;
-    int fd = -1;
-    int rc = -1;
+	struct libevdev* dev = NULL;
+	int fd = -1;
+	int rc = -1;
 
-    for (int i = 0; i < 300; i++) {
-        char path[128];
-        snprintf(path, sizeof(path), "/dev/input/event%d", i);
-
-        fd = open(path, O_RDONLY|O_NONBLOCK);
-        if (fd < 0) {continue;}
-
-        rc = libevdev_new_from_fd(fd, &dev);
-        if (rc < 0) {close(fd); continue;}
-
-        if (libevdev_get_id_vendor(dev) == vendor_id &&
-            libevdev_get_id_product(dev) == product_id) 
-            {break;}
-    }
-    printf("Device found: %s\n", libevdev_get_name(dev));
-
-    // Update the pointers with the obtained values
-    *fd_ptr = fd;
-    *rc_ptr = rc;
-
-    return dev; // Return the dev variable to main
+	for (int i = 0; i < 300; i++) {
+		char path[128];
+		snprintf(path, sizeof(path), "/dev/input/event%d", i);
+		
+		fd = open(path, O_RDONLY|O_NONBLOCK);
+		if (fd < 0) {continue;}
+		
+		rc = libevdev_new_from_fd(fd, &dev);
+		if (rc < 0) {close(fd); continue;}
+		
+		if (libevdev_get_id_vendor(dev) == vendor_id &&
+			libevdev_get_id_product(dev) == product_id) 
+			{break;}
+	}
+	printf("Device found: %s\n", libevdev_get_name(dev));
+	
+	// Update the pointers with the obtained values
+	*fd_ptr = fd;
+	*rc_ptr = rc;
+	
+	return dev; // Return the dev variable to main
 }
 
 // create_alsamidi_port
@@ -168,7 +168,8 @@ void MIDI_pitchbend(struct libevdev *dev, struct input_event ev, snd_seq_t *midi
 }
 
 void dev_midi_event_loop(struct libevdev *dev, snd_seq_t *midi, int port) {
-	int rc;	
+	int rc;
+	int controlIndex;
 	int noteoffset = 60;
 	int channel = 0;
 
@@ -202,7 +203,7 @@ void dev_midi_event_loop(struct libevdev *dev, snd_seq_t *midi, int port) {
 		rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
 		if (rc == 0) {
 		    // Find the corresponding button state
-		    int controlIndex = -1;
+		    controlIndex = -1;
 
 		    for (int i = 0; i < NUM_CONTROLS; i++) {
 		        if (ev.code == controlStates[i].evcode) {
