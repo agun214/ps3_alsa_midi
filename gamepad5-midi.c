@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 
 	int noteoffset = 60;
 	int channel = 0;
-
+	
 	// Array to store the state of each button : ev.code, ev.value, MIDI 
 	struct ControlState controlStates[NUM_CONTROLS] = {
 		{304, 0, 0},      	// A
@@ -138,7 +138,6 @@ int main(int argc, char **argv) {
 						break;
 				}
 		    }
-
 		} else if (rc == -EAGAIN) {
 		    // No events available, try again
 		    continue;
