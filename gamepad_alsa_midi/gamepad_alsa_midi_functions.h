@@ -22,7 +22,7 @@ struct ControlState {
     int MIDIevcode;   // midi event associated with the control
 };
 
-struct libevdev* ps3_connect(int* fd_ptr, int* rc_ptr);
+struct libevdev* ps3_connect(int vendor_id, int product_id, int* fd_ptr, int* rc_ptr);
 int setup_midi_port(snd_seq_t** midi_ptr, int* port_ptr);
 void MIDI_note(snd_seq_t *midi, int note, int velocity, int channel, int port, int noteoffset);
 void MIDI_controller(struct libevdev *dev, struct input_event ev, snd_seq_t *midi, int channel, int port, int invert_axis);
