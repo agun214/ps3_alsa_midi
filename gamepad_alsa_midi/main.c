@@ -8,7 +8,7 @@ gcc -o gamepad_alsa_midi main.c gamepad_alsa_midi_functions.o -I/usr/include/lib
 int main(int argc, char **argv) {
     int fd, rc, port;
 	snd_seq_t* midi;
-	struct libevdev* dev = ps3_connect(&fd, &rc);
+	struct libevdev* dev = ps3_connect(0x045e, 0x028e, &fd, &rc);
 	setup_midi_port(&midi, &port);
 	dev_midi_event_loop(dev, midi, port);
 
