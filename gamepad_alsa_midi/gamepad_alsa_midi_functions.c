@@ -1,9 +1,6 @@
 #include "gamepad_alsa_midi_functions.h"
 
-struct libevdev* ps3_connect(int* fd_ptr, int* rc_ptr) {
-    
-    int vendor_id = 0x045e;
-    int product_id = 0x028e;
+struct libevdev* ps3_connect(int vendor_id, int product_id, int* fd_ptr, int* rc_ptr) {
 
     struct libevdev* dev = NULL;
     int fd = -1;
